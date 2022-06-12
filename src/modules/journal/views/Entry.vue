@@ -1,38 +1,87 @@
 <template>
-	<div class="entry-title d-flex justify-content-between p-2">
-		<div>
-			<span class="text-success fs-3 fw-bold">1</span>
-			<span class="mx-1 fs-3">May</span>
-			<span class="m2-2 fs-4 fw-light">2022</span>
+	<template v-if="entry">
+		<div class="entry-title d-flex justify-content-between p-2">
+			<div>
+				<span class="text-success fs-3 fw-bold">{{ day }}</span>
+				<span class="mx-1 fs-3">{{ month }}</span>
+				<span class="m2-2 fs-4 fw-light">{{ year }}</span>
+			</div>
+
+			<div>
+				<button class="btn btn-danger mx-2">
+					Remove
+					<i class="mx-1 fa fa-trash-alt"></i>
+				</button>
+
+				<button class="btn btn-primary mx-2">
+					Upload Image
+					<i class="mx-1 fa fa-upload"></i>
+				</button>
+			</div>
+		</div>
+		<hr />
+		<div class="d-flex flex-column px-3 h-75">
+			<textarea placeholder="Write your daily story" v-model="entry.text"></textarea>
 		</div>
 
-		<div>
-			<button class="btn btn-danger mx-2">
-				Remove
-				<i class="mx-1 fa fa-trash-alt"></i>
-			</button>
-
-			<button class="btn btn-primary mx-2">
-				Upload Image
-				<i class="mx-1 fa fa-upload"></i>
-			</button>
-		</div>
-	</div>
-	<hr />
-	<div class="d-flex flex-column px-3 h-75">
-		<textarea placeholder="Write your daily story"></textarea>
-	</div>
-
-	<FabButton icon="fa-save" />
-	<img src="https://picsum.photos/200" class="img-thumbnail" />
+		<FabButton icon="fa-save" />
+		<img src="https://picsum.photos/200" class="img-thumbnail" />
+	</template>
 </template>
 
 <script>
 import FabButton from "../components/FabButton.vue";
+import { mapGetters } from "vuex";
+import getDayMonthYear from "@/modules/journal/helpers/dateHelper";
 
 export default {
 	components: {
 		FabButton,
+	},
+	computed: {
+		...mapGetters({
+			entriesById: "journal/entriesById",
+		}),
+		day() {
+			const { day } = getDayMonthYear(this.entry.date);
+			return day;
+		},
+		month() {
+			const { month } = getDayMonthYear(this.entry.date);
+			return month;
+		},
+		year() {
+			const { year } = getDayMonthYear(this.entry.date);
+			return year;
+		},
+	},
+	methods: {
+		entryById() {
+			var entry = this.entriesById(this.id);
+			if (!entry) {
+				this.$router.push({ name: "noentry" });
+			}
+			this.entry = entry;
+		},
+	},
+	props: {
+		id: {
+			type: String,
+			required: true,
+		},
+	},
+	data() {
+		return {
+			entry: null,
+		};
+	},
+	created() {
+		this.entryById(this.id);
+	},
+	watch: {
+		id() {
+			this.entryById();
+		},
 	},
 };
 </script>

@@ -1,26 +1,38 @@
 <template>
 	<div class="entry-container">
 		<div class="px-2 pt-2">
-			<input type="text" class="form-control" placeholder="Search entry" />
+			<input type="text" v-model="term" class="form-control" placeholder="Search entry" />
 		</div>
 		<div class="entry-scrollable">
-			<Entry v-for="item in 100" :key="item" />
+			<Entry v-for="item in entriesByTermComputed" :key="item.id" :entry="item" />
 		</div>
 	</div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import Entry from "./Entry.vue";
-export default { components: { Entry } };
+export default {
+	components: { Entry },
+	computed: {
+		...mapGetters({
+			entriesByTerm: "journal/entriesByTerm",
+		}),
+		entriesByTermComputed() {
+			return this.entriesByTerm(this.term);
+		},
+	},
+	data() {
+		return {
+			term: "",
+		};
+	},
+};
 </script>
 
 <style lang="scss" scoped>
 input {
 	height: 35px;
-}
-.entry-container {
-	//border-right: 1px solid #2c3e50;
-	//height: calc(100vh - 75vh);
 }
 
 .entry-scrollable {

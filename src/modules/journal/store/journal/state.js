@@ -8,13 +8,13 @@ export default () => ({
 			picture: null,
 		},
 		{
-			id: new Date().getTime() + 1000,
+			id: new Date().getTime() + 10000,
 			date: new Date().toDateString(),
 			text: "Veniam veniam veniam cupidatat non duis deserunt aliquip est laboris labore sit nostrud quis nostrud.",
 			picture: null,
 		},
 		{
-			id: new Date().getTime() + 2000,
+			id: new Date().getTime() + 20000,
 			date: new Date().toDateString(),
 			text: "Ad sunt cupidatat ea do eu ea proident fugiat.",
 			picture: null,
