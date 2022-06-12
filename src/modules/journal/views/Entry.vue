@@ -24,7 +24,7 @@
 			<textarea placeholder="Write your daily story" v-model="entry.text"></textarea>
 		</div>
 
-		<FabButton icon="fa-save" />
+		<FabButton icon="fa-save" @save-click="save" />
 		<img src="https://picsum.photos/200" class="img-thumbnail" />
 	</template>
 </template>
@@ -37,6 +37,17 @@ import getDayMonthYear from "@/modules/journal/helpers/dateHelper";
 export default {
 	components: {
 		FabButton,
+	},
+	props: {
+		id: {
+			type: String,
+			required: true,
+		},
+	},
+	data() {
+		return {
+			entry: null,
+		};
 	},
 	computed: {
 		...mapGetters({
@@ -63,17 +74,8 @@ export default {
 			}
 			this.entry = entry;
 		},
-	},
-	props: {
-		id: {
-			type: String,
-			required: true,
-		},
-	},
-	data() {
-		return {
-			entry: null,
-		};
+
+		async save() {},
 	},
 	created() {
 		this.entryById(this.id);
