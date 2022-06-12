@@ -14,11 +14,21 @@
 <script>
 import NavigationBar from "../components/NavigationBar.vue";
 import EntryList from "../components/EntryList.vue";
+import { mapActions } from "vuex";
+
 export default {
 	name: "JournalLayout",
 	components: {
 		NavigationBar,
 		EntryList,
+	},
+	methods: {
+		...mapActions({
+			getEntries: "journal/getEntries",
+		}),
+	},
+	created() {
+		this.getEntries();
 	},
 };
 </script>

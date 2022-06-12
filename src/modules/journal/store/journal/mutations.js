@@ -1,6 +1,11 @@
-export const setLoading = (state) => {};
+export const setLoading = (state, val) => {
+	state.isLoading = val;
+};
 
-export const setEntries = (state) => {};
+export const setEntries = (state, entries) => {
+	state.entries = [...state.entries, ...entries];
+	setLoading(state, false);
+};
 
 export const updEntry = (state) => {};
 
