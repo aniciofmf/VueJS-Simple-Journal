@@ -8,12 +8,13 @@
 			</div>
 
 			<div>
+				<input type="file" v-show="false" accept="image/jpeg,image/png,image/jpg" @change="selectImage" ref="imgRef" />
 				<button v-if="showRemove" class="btn btn-danger mx-2" @click="remove">
 					Remove
 					<i class="mx-1 fa fa-trash-alt"></i>
 				</button>
 
-				<button class="btn btn-primary mx-2">
+				<button @click="imageLoad" class="btn btn-primary mx-2">
 					Upload Image
 					<i class="mx-1 fa fa-upload"></i>
 				</button>
@@ -25,13 +26,15 @@
 		</div>
 
 		<FabButton icon="fa-save" @save-click="save" />
-		<img src="https://picsum.photos/200" class="img-thumbnail" />
+		<img v-if="localImage" :src="localImage" class="img-thumbnail" />
 	</template>
 </template>
 
 <script>
-import FabButton from "../components/FabButton.vue";
 import { mapGetters, mapActions } from "vuex";
+import Swal from "sweetalert2";
+
+import FabButton from "../components/FabButton.vue";
 import getDayMonthYear from "@/modules/journal/helpers/dateHelper";
 
 export default {
@@ -48,6 +51,8 @@ export default {
 		return {
 			entry: null,
 			showRemove: true,
+			localImage: null,
+			file: null,
 		};
 	},
 	computed: {
@@ -67,6 +72,11 @@ export default {
 			return year;
 		},
 	},
+	watch: {
+		id() {
+			this.entryById();
+		},
+	},
 	methods: {
 		...mapActions({
 			updEntry: "journal/updEntry",
@@ -78,9 +88,9 @@ export default {
 
 			if (this.id == "new") {
 				entry = {
-					text: null,
+					text: "",
 					date: new Date().getTime(),
-					picture: null,
+					picture: "",
 				};
 
 				this.showRemove = false;
@@ -97,26 +107,59 @@ export default {
 		},
 
 		async save() {
+			new Swal({
+				title: "Wait please ..",
+				allowOutsideClick: false,
+			});
+
+			Swal.showLoading();
+
 			if (this.entry.id) {
 				await this.updEntry(this.entry);
 			} else {
 				var id = await this.addEntry(this.entry);
 				this.$router.push({ name: "entry", params: { id: id } });
 			}
+
+			Swal.fire("Saved", "The entry was sucessfully saved!", "success");
 		},
 
 		async remove() {
-			await this.delEntry(this.entry.id);
-			this.$router.push({ name: "noentry" });
+			this.showRemove = false;
+
+			var { isConfirmed } = await Swal.fire({
+				title: "Attention",
+				text: "You're about to delete the entry, please confirm",
+				showDenyButton: true,
+				confirmButtonText: "Yes",
+			});
+
+			if (isConfirmed) {
+				await this.delEntry(this.entry.id);
+				this.$router.push({ name: "noentry" });
+			}
+
+			this.showRemove = true;
+		},
+
+		selectImage($event) {
+			var file = $event.target.files[0];
+			var frObj = new FileReader();
+
+			if (!file) {
+				return;
+			}
+
+			frObj.readAsDataURL(file);
+			frObj.onload = () => (this.localImage = frObj.result);
+			this.file = file;
+		},
+		imageLoad() {
+			this.$refs.imgRef.click();
 		},
 	},
 	created() {
 		this.entryById(this.id);
-	},
-	watch: {
-		id() {
-			this.entryById();
-		},
 	},
 };
 </script>
