@@ -31,7 +31,7 @@
 
 <script>
 import FabButton from "../components/FabButton.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import getDayMonthYear from "@/modules/journal/helpers/dateHelper";
 
 export default {
@@ -67,15 +67,37 @@ export default {
 		},
 	},
 	methods: {
+		...mapActions({
+			updEntry: "journal/updEntry",
+			addEntry: "journal/addEntry",
+		}),
 		entryById() {
-			var entry = this.entriesById(this.id);
-			if (!entry) {
-				this.$router.push({ name: "noentry" });
+			var entry;
+
+			if (this.id == "new") {
+				entry = {
+					text: null,
+					date: new Date().getTime(),
+					picture: null,
+				};
+			} else {
+				entry = this.entriesById(this.id);
+				if (!entry) {
+					this.$router.push({ name: "noentry" });
+				}
 			}
+
 			this.entry = entry;
 		},
 
-		async save() {},
+		async save() {
+			if (this.entry.id) {
+				await this.updEntry(this.entry);
+			} else {
+				var id = await this.addEntry(this.entry);
+				this.$router.push({ name: "entry", params: { id: id } });
+			}
+		},
 	},
 	created() {
 		this.entryById(this.id);

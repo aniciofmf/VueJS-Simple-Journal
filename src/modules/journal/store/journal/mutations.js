@@ -7,6 +7,15 @@ export const setEntries = (state, entries) => {
 	setLoading(state, false);
 };
 
-export const updEntry = (state) => {};
+export const updEntry = (state, entry) => {
+	setLoading(state, true);
+	var id = state.entries.map((e) => e.id).indexOf(entry.id);
+	state.entries[id] = entry;
+	setLoading(state, false);
+};
 
-export const addEntry = (state) => {};
+export const addEntry = (state, entry) => {
+	setLoading(state, true);
+	state.entries = [entry, ...state.entries];
+	setLoading(state, false);
+};
