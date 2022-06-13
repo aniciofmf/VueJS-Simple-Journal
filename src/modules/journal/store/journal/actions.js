@@ -36,3 +36,9 @@ export const addEntry = async ({ commit }, entry) => {
 
 	return data.name;
 };
+
+export const delEntry = async ({ commit }, id) => {
+	await apiJournal.delete(`/entries/${id}.json`);
+
+	commit("delEntry", id);
+};

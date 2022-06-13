@@ -8,7 +8,7 @@
 			</div>
 
 			<div>
-				<button class="btn btn-danger mx-2">
+				<button v-if="showRemove" class="btn btn-danger mx-2" @click="remove">
 					Remove
 					<i class="mx-1 fa fa-trash-alt"></i>
 				</button>
@@ -47,6 +47,7 @@ export default {
 	data() {
 		return {
 			entry: null,
+			showRemove: true,
 		};
 	},
 	computed: {
@@ -70,6 +71,7 @@ export default {
 		...mapActions({
 			updEntry: "journal/updEntry",
 			addEntry: "journal/addEntry",
+			delEntry: "journal/delEntry",
 		}),
 		entryById() {
 			var entry;
@@ -80,11 +82,15 @@ export default {
 					date: new Date().getTime(),
 					picture: null,
 				};
+
+				this.showRemove = false;
 			} else {
 				entry = this.entriesById(this.id);
 				if (!entry) {
 					this.$router.push({ name: "noentry" });
 				}
+
+				this.showRemove = true;
 			}
 
 			this.entry = entry;
@@ -97,6 +103,11 @@ export default {
 				var id = await this.addEntry(this.entry);
 				this.$router.push({ name: "entry", params: { id: id } });
 			}
+		},
+
+		async remove() {
+			await this.delEntry(this.entry.id);
+			this.$router.push({ name: "noentry" });
 		},
 	},
 	created() {

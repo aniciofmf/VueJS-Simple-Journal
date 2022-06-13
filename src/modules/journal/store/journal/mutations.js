@@ -19,3 +19,7 @@ export const addEntry = (state, entry) => {
 	state.entries = [entry, ...state.entries];
 	setLoading(state, false);
 };
+
+export const delEntry = (state, id) => {
+	state.entries = state.entries.filter((e) => e.id != id);
+};
