@@ -118,19 +118,23 @@ export default {
 
 			Swal.showLoading();
 
-			var picture = await uploadImage(this.file);
-			this.entry.picture = picture;
+			try {
+				var picture = await uploadImage(this.file);
+				this.entry.picture = picture;
 
-			if (this.entry.id) {
-				await this.updEntry(this.entry);
-			} else {
-				var id = await this.addEntry(this.entry);
-				this.$router.push({ name: "entry", params: { id: id } });
+				if (this.entry.id) {
+					await this.updEntry(this.entry);
+				} else {
+					var id = await this.addEntry(this.entry);
+					this.$router.push({ name: "entry", params: { id: id } });
+				}
+
+				Swal.fire("Saved", "The entry was sucessfully saved!", "success");
+			} catch (error) {
+				Swal.fire("Attention", "There was an issue creating the entry", "error");
+			} finally {
+				this.file = null;
 			}
-
-			this.file = null;
-
-			Swal.fire("Saved", "The entry was sucessfully saved!", "success");
 		},
 
 		async remove() {
