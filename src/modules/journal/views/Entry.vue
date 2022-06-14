@@ -26,6 +26,7 @@
 		</div>
 
 		<FabButton icon="fa-save" @save-click="save" />
+		<img v-if="entry.picture && !localImage" :src="entry.picture" class="img-thumbnail" />
 		<img v-if="localImage" :src="localImage" class="img-thumbnail" />
 	</template>
 </template>
@@ -36,6 +37,7 @@ import Swal from "sweetalert2";
 
 import FabButton from "../components/FabButton.vue";
 import getDayMonthYear from "@/modules/journal/helpers/dateHelper";
+import uploadImage from "@/modules/journal/helpers/upload";
 
 export default {
 	components: {
@@ -86,6 +88,8 @@ export default {
 		entryById() {
 			var entry;
 
+			this.localImage = null;
+
 			if (this.id == "new") {
 				entry = {
 					text: "",
@@ -114,12 +118,17 @@ export default {
 
 			Swal.showLoading();
 
+			var picture = await uploadImage(this.file);
+			this.entry.picture = picture;
+
 			if (this.entry.id) {
 				await this.updEntry(this.entry);
 			} else {
 				var id = await this.addEntry(this.entry);
 				this.$router.push({ name: "entry", params: { id: id } });
 			}
+
+			this.file = null;
 
 			Swal.fire("Saved", "The entry was sucessfully saved!", "success");
 		},
