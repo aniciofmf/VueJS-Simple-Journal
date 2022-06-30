@@ -1,5 +1,5 @@
 <template>
-	<form @submit.prevent="submit" class="login100-form validate-form p-b-33 p-t-5">
+	<form @submit.prevent="submit(userForm)" class="login100-form validate-form p-b-33 p-t-5">
 		<div class="wrap-input100 validate-input" data-validate="Enter email">
 			<input class="input100" type="text" placeholder="Email" required v-model="userForm.email" />
 			<span class="focus-input100" data-placeholder="&#xe818;"></span>
@@ -39,8 +39,8 @@ export default {
 
 		const { createUser } = useAuth();
 
-		const submit = async () => {
-			await createUser();
+		const submit = async (user) => {
+			await createUser(user);
 		};
 
 		return {
