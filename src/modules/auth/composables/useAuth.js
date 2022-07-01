@@ -9,8 +9,15 @@ const useAuth = () => {
 		return actionResp;
 	};
 
+	var loginUser = async (user) => {
+		const actionResp = await store.dispatch("auth/loginUser", user);
+
+		return actionResp;
+	};
+
 	return {
 		createUser,
+		loginUser,
 	};
 };
 

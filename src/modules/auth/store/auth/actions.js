@@ -34,3 +34,34 @@ export const makeUser = async ({ commit }, user) => {
 		return { success: false, err: message };
 	}
 };
+
+export const loginUser = async ({ commit }, user) => {
+	var { email, password } = user;
+	try {
+		const {
+			data: { displayName, idToken, refreshToken },
+		} = await apiAuth.post("/v1/accounts:signInWithPassword", {
+			email,
+			password,
+			returnSecureToken: true,
+		});
+
+		delete user.password;
+
+		user.displayName = displayName;
+
+		commit("login", { user, idToken, refreshToken });
+
+		return { success: true };
+	} catch (error) {
+		const {
+			response: {
+				data: {
+					error: { message },
+				},
+			},
+		} = error;
+
+		return { success: false, err: message };
+	}
+};
