@@ -23,3 +23,7 @@ export const addEntry = (state, entry) => {
 export const delEntry = (state, id) => {
 	state.entries = state.entries.filter((e) => e.id != id);
 };
+
+export const resetEntries = (state) => {
+	state.entries = [];
+};

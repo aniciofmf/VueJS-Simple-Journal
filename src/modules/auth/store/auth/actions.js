@@ -76,20 +76,17 @@ export const checkAuth = async ({ commit }) => {
 	}
 
 	try {
-		const {
-			data: { displayName, email },
-		} = await apiAuth.post("/v1/accounts:lookup", {
+		const { data } = await apiAuth.post("/v1/accounts:lookup", {
 			idToken,
 		});
 
-		const user = {
-			displayName,
-			email,
-		};
+		const { displayName, email } = data.users[0];
+
+		const user = { displayName, email };
 
 		commit("login", { user, idToken, refreshToken });
 
-		return { sucess: true };
+		return { success: true };
 	} catch (error) {
 		commit("logout");
 		const {

@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import journalRouter from "@/modules/journal/router/index";
 import authRouter from "@/modules/auth/router/index";
+import isAuthGuard from "@/modules/auth/router/guard";
 
 const routes = [
 	{
@@ -20,6 +21,7 @@ const routes = [
 	},
 	{
 		path: "/journal",
+		beforeEnter: [isAuthGuard],
 		...journalRouter,
 	},
 ];
